@@ -1,7 +1,7 @@
 <script setup>
 import { uid } from "uid";
 import { ref } from "vue";
-import { Icon } from '@iconify/vue'
+import { Icon } from "@iconify/vue";
 import TodoCreator from "../components/TodoCreator.vue";
 import TodoItem from "../components/TodoItem.vue";
 const todoList = ref([]);
@@ -13,6 +13,23 @@ const createTodo = (todo) => {
     isEditing: null,
   });
 };
+
+const toggleTodoComplete = (todoPos) => {
+  todoList.value[todoPos].isCompleted = !todoList.value[todoPos].isCompleted;
+};
+
+const toggleEditTodo = (todoPos) => {
+  todoList.value[todoPos].isEditing = !todoList.value[todoPos].isEditing;
+};
+
+const updateTodo = (todoVal, todoPos) => {
+  todoList.value[todoPos].todo = todoVal;
+};
+
+const deleteTodo = (todoId) => {
+  todoList.value = todoList.value.filter((todo) => todo.id !== todoId)
+}
+
 </script>
 
 <template>
@@ -20,7 +37,15 @@ const createTodo = (todo) => {
     <h1>Create Todo</h1>
     <TodoCreator @create-todo="createTodo" />
     <ul v-if="todoList.length > 0" class="todo-list">
-      <TodoItem v-for="todo in todoList" :todo="todo" />
+      <TodoItem
+        v-for="(todo, index) in todoList"
+        :todo="todo"
+        :index="index"
+        @toggle-complete="toggleTodoComplete"
+        @edit-todo="toggleEditTodo"
+        @update-todo="updateTodo"
+        @delete-todo="deleteTodo"
+      />
     </ul>
     <p v-else class="todos-msg">
       <Icon icon="nato-v1-:sad-but-relieved-face" width="22" />
